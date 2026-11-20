@@ -6,7 +6,7 @@ import com.outloob.restaurant.restaurant.dto.RestaurantResponseDto;
 import com.outloob.restaurant.restaurant.service.RestaurantService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,15 +15,15 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class RestaurantMerchantController {
 
-    @Autowired
-    final RestaurantService restaurantService;
+    private final RestaurantService restaurantService;
 
     @PostMapping(version = "1.0")
     public ResponseEntity<ApiResponse<RestaurantResponseDto>> createRestaurant(
             @Valid @RequestBody RestaurantRequestDto restaurant) {
         RestaurantResponseDto createdRestaurant = restaurantService.createRestaurant(restaurant);
-        return ResponseEntity.ok()
-                .body(ApiResponse.success(createdRestaurant , "Restaurant registered successfully and is pending admin approval"));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success(createdRestaurant,
+                        "Restaurant registered successfully and is pending admin approval"));
     }
 
 }

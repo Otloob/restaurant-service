@@ -11,7 +11,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "restaurant")
+@Table(
+        name = "restaurant",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_restaurant_email", columnNames = "email"),
+                @UniqueConstraint(name = "uk_restaurant_phone_number", columnNames = "phone_number")
+        }
+)
 @Getter
 @Setter
 @AllArgsConstructor
@@ -37,6 +43,7 @@ public class Restaurant extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
+    @Builder.Default
     private RestaurantStatus status = RestaurantStatus.ACTIVE;
 
     @Column(name = "latitude", nullable = false)
@@ -46,12 +53,15 @@ public class Restaurant extends BaseEntity {
     private double longitude;
 
     @Column(name = "delivery_radius_m", nullable = false)
+    @Builder.Default
     private int deliveryRadiusM = 5000;
 
     @Column(name = "rating", nullable = false)
+    @Builder.Default
     private double rating = 5.0;
 
     @Column(name = "rating_count", nullable = false)
+    @Builder.Default
     private int ratingCount = 0;
 
     @Embedded
@@ -59,6 +69,7 @@ public class Restaurant extends BaseEntity {
 
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @OrderBy("dayOfWeek ASC, opensAt ASC")
+    @Builder.Default
     private List<OpeningHours> openingHours = new ArrayList<>();
 
 }

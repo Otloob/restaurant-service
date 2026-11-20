@@ -17,5 +17,7 @@ CREATE TABLE restaurant
     city              VARCHAR(255)                   NOT NULL,
     state             VARCHAR(255),
     country           VARCHAR(255)                   NOT NULL,
-    CONSTRAINT pk_restaurant PRIMARY KEY (id)
+    CONSTRAINT pk_restaurant PRIMARY KEY (id),
+    CONSTRAINT uk_restaurant_email UNIQUE (email),
+    CONSTRAINT uk_restaurant_phone_number UNIQUE (phone_number)
 );
