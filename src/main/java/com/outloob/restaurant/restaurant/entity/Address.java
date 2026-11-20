@@ -11,6 +11,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor @AllArgsConstructor
 @EqualsAndHashCode
+@Builder
 public class Address {
 
     @Column(name = "street_address", nullable = false)
@@ -21,9 +22,6 @@ public class Address {
 
     @Column(name = "state")
     private String state;
-
-    @Column(name = "postal_code", nullable = false)
-    private String postalCode;
 
     @Column(name = "country", nullable = false)
     private String country;

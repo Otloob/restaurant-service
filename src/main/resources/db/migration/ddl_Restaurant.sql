@@ -1,0 +1,21 @@
+CREATE TABLE restaurant
+(
+    id                UUID                           NOT NULL,
+    created_at        TIMESTAMP(6) WITHOUT TIME ZONE NOT NULL,
+    updated_at        TIMESTAMP(6) WITHOUT TIME ZONE NOT NULL,
+    name              VARCHAR(255)                   NOT NULL,
+    description       VARCHAR(1000),
+    email             VARCHAR(255)                   NOT NULL,
+    phone_number      VARCHAR(255)                   NOT NULL,
+    status            VARCHAR(255)                   NOT NULL,
+    latitude          DOUBLE PRECISION               NOT NULL,
+    longitude         DOUBLE PRECISION               NOT NULL,
+    delivery_radius_m INTEGER                        NOT NULL,
+    rating            DOUBLE PRECISION               NOT NULL,
+    rating_count      INTEGER                        NOT NULL,
+    street_address    VARCHAR(255)                   NOT NULL,
+    city              VARCHAR(255)                   NOT NULL,
+    state             VARCHAR(255),
+    country           VARCHAR(255)                   NOT NULL,
+    CONSTRAINT pk_restaurant PRIMARY KEY (id)
+);
