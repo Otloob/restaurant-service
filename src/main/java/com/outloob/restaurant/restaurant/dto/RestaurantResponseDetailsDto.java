@@ -1,14 +1,14 @@
 package com.outloob.restaurant.restaurant.dto;
 
 import com.outloob.restaurant.restaurant.entity.Address;
-import com.outloob.restaurant.restaurant.entity.OpeningHours;
 import com.outloob.restaurant.restaurant.enums.RestaurantStatus;
 
 import java.util.List;
 import java.util.UUID;
 
-public record RestaurantResponseDto(
+public record RestaurantResponseDetailsDto(
         UUID id,
+        UUID ownerId,
         String name,
         String description,
         String email,
@@ -20,6 +20,6 @@ public record RestaurantResponseDto(
         double rating,
         int ratingCount,
         Address address,
-        List<OpeningHours> openingHours
+        List<OpeningHoursDto> openingHours
 ) {
 }
