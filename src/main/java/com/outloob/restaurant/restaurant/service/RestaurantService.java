@@ -2,6 +2,7 @@ package com.outloob.restaurant.restaurant.service;
 
 import com.outloob.restaurant.restaurant.dto.RestaurantRequestDto;
 import com.outloob.restaurant.restaurant.dto.RestaurantResponseDetailsDto;
+import com.outloob.restaurant.restaurant.dto.UpdateOpeningHoursRequest;
 import com.outloob.restaurant.restaurant.dto.UpdateRestaurantProfileRequest;
 
 import java.util.UUID;
@@ -14,4 +15,8 @@ public interface RestaurantService {
                                                          UUID ownerId);
 
     RestaurantResponseDetailsDto getRestaurantDetails(UUID restaurantId, UUID ownerId);
+
+    RestaurantResponseDetailsDto updateOpeningHours(UUID restaurantId,
+                                                    UpdateOpeningHoursRequest request,
+                                                    UUID ownerId);
 }

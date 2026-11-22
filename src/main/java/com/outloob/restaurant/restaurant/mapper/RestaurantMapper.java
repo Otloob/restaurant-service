@@ -8,6 +8,7 @@ import com.outloob.restaurant.restaurant.dto.UpdateRestaurantProfileRequest;
 import com.outloob.restaurant.restaurant.entity.OpeningHours;
 import com.outloob.restaurant.restaurant.entity.Restaurant;
 
+import java.util.Comparator;
 import java.util.List;
 
 public class RestaurantMapper {
@@ -61,6 +62,26 @@ public class RestaurantMapper {
                 restaurant.getAddress(),
                 toOpeningHoursDtos(restaurant.getOpeningHours())
         );
+    }
+
+    public static List<OpeningHours> toOpeningHoursEntities(List<OpeningHoursDto> openingHours) {
+        if (openingHours == null) {
+            return List.of();
+        }
+
+        return openingHours.stream()
+                .sorted(Comparator.comparingInt(OpeningHoursDto::dayOfWeek)
+                        .thenComparing(OpeningHoursDto::opensAt))
+                .map(RestaurantMapper::toOpeningHoursEntity)
+                .toList();
+    }
+
+    private static OpeningHours toOpeningHoursEntity(OpeningHoursDto openingHours) {
+        OpeningHours entity = new OpeningHours();
+        entity.setDayOfWeek(openingHours.dayOfWeek());
+        entity.setOpensAt(openingHours.opensAt());
+        entity.setClosesAt(openingHours.closesAt());
+        return entity;
     }
 
     private static List<OpeningHoursDto> toOpeningHoursDtos(List<OpeningHours> openingHours) {

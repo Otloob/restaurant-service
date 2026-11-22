@@ -3,6 +3,7 @@ package com.outloob.restaurant.restaurant.controller;
 import com.outloob.restaurant.common.ApiResponse;
 import com.outloob.restaurant.restaurant.dto.RestaurantRequestDto;
 import com.outloob.restaurant.restaurant.dto.RestaurantResponseDetailsDto;
+import com.outloob.restaurant.restaurant.dto.UpdateOpeningHoursRequest;
 import com.outloob.restaurant.restaurant.dto.UpdateRestaurantProfileRequest;
 import com.outloob.restaurant.restaurant.service.RestaurantService;
 import jakarta.validation.Valid;
@@ -50,5 +51,16 @@ public class RestaurantMerchantController {
         RestaurantResponseDetailsDto restaurant = restaurantService.getRestaurantDetails(restaurantId, ownerId);
         return ResponseEntity.ok()
                 .body(ApiResponse.success(restaurant, "Restaurant details retrieved successfully"));
+    }
+
+    @PutMapping(value = "/{restaurantId}/opening-hours", version = "1.0")
+    public ResponseEntity<ApiResponse<RestaurantResponseDetailsDto>> updateOpeningHours(
+            @PathVariable UUID restaurantId,
+            @Valid @RequestBody UpdateOpeningHoursRequest request,
+            @RequestHeader(value = "X-User-Id", required = false) UUID ownerId) {
+        RestaurantResponseDetailsDto restaurant =
+                restaurantService.updateOpeningHours(restaurantId, request, ownerId);
+        return ResponseEntity.ok()
+                .body(ApiResponse.success(restaurant, "Opening hours updated successfully"));
     }
 }
