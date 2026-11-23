@@ -11,7 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void configureApiVersioning(ApiVersionConfigurer configurer) {
-        configurer.useMediaTypeParameter(MediaType.parseMediaType("application/vnd.jobra+json") , "v")
+        configurer.useMediaTypeParameter(MediaType.parseMediaType("application/vnd.otloob+json") , "v")
                 .addSupportedVersions("1.0").setDefaultVersion("1.0");
     }
 
