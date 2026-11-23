@@ -24,3 +24,6 @@ CREATE TABLE restaurant
 );
 
 CREATE INDEX idx_restaurant_owner_id ON restaurant (owner_id);
+
+COMMENT ON COLUMN restaurant.owner_id IS
+    'Owner auth-service user id. NULL = legacy/unassigned: not merchant-accessible until an operator assigns a verified owner from the authoritative mapping. Never guess or backfill from request data.';
