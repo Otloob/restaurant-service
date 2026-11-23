@@ -11,6 +11,6 @@ import java.util.List;
  */
 public record UpdateOpeningHoursRequest(
         @NotNull(message = "openingHours is required")
-        List<@Valid OpeningHoursDto> openingHours
+        List<@NotNull @Valid OpeningHoursDto> openingHours
 ) {
 }

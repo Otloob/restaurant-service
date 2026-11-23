@@ -34,6 +34,10 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     @Transactional
     public RestaurantResponseDetailsDto createRestaurant(RestaurantRequestDto restaurantRequestDto, UUID ownerId) {
+        if (ownerId == null) {
+            throw new InvalidRequestException("X-User-Id is required.");
+        }
+
         String email = normalizeEmail(restaurantRequestDto.email());
         String phoneNumber = normalizePhoneNumber(restaurantRequestDto.phoneNumber());
 

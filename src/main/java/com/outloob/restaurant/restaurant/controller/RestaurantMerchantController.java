@@ -25,7 +25,7 @@ public class RestaurantMerchantController {
     public ResponseEntity<ApiResponse<RestaurantResponseDetailsDto>> createRestaurant(
             @Valid @RequestBody RestaurantRequestDto restaurant,
             // Injected by the API gateway after JWT validation.
-            // TODO: make required and read it from the authenticated principal once security is in place.
+            // TODO: read it from the authenticated principal once security is in place.
             @RequestHeader(value = "X-User-Id", required = false) UUID ownerId) {
         RestaurantResponseDetailsDto createdRestaurant = restaurantService.createRestaurant(restaurant, ownerId);
         return ResponseEntity.status(HttpStatus.CREATED)

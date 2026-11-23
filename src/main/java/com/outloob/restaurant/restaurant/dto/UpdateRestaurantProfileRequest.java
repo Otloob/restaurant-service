@@ -28,7 +28,7 @@ public record UpdateRestaurantProfileRequest(
 
         @NotBlank
         @Pattern(
-                regexp = "^\\+?[0-9\\s\\-()]{7,20}$",
+                regexp = "^(?=[+0-9\\s\\-()]*[0-9])\\+?[0-9\\s\\-()]{7,20}$",
                 message = "phoneNumber must be a valid phone number (7-20 characters, digits with optional +, spaces, dashes or parentheses)"
         )
         String phoneNumber,
