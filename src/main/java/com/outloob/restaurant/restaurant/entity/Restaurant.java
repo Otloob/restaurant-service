@@ -16,7 +16,8 @@ import java.util.UUID;
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_restaurant_email", columnNames = "email"),
                 @UniqueConstraint(name = "uk_restaurant_phone_number", columnNames = "phone_number")
-        }
+        },
+        indexes = @Index(name = "idx_restaurant_owner_id", columnList = "owner_id")
 )
 @Getter
 @Setter
@@ -28,6 +29,14 @@ public class Restaurant extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
+
+    /**
+     * Id of the authenticated account (auth-service user id) that owns this
+     * restaurant. Taken from the authenticated principal (JWT `sub` /
+     * gateway `X-User-Id` header). Never populated from the request body.
+     */
+    @Column(name = "owner_id", updatable = false)
+    private UUID ownerId;
 
     @Column(name = "name", nullable = false)
     private String name;
