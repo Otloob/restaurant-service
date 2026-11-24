@@ -4,6 +4,7 @@ import com.outloob.restaurant.config.WebConfig;
 import com.outloob.restaurant.menu.dto.MenuCategoryRequestDto;
 import com.outloob.restaurant.menu.dto.MenuCategoryResponseDto;
 import com.outloob.restaurant.menu.service.MenuCategoryService;
+import com.outloob.restaurant.menu.service.MenuItemService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -40,6 +41,9 @@ class MenuControllerTest {
 
     @MockitoBean
     private MenuCategoryService menuCategoryService;
+
+    @MockitoBean
+    private MenuItemService menuItemService;
 
     // The application enables JPA auditing globally; the MVC slice has no JPA metamodel.
     @MockitoBean(name = "jpaMappingContext")
