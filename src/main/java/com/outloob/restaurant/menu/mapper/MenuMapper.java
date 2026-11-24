@@ -18,4 +18,5 @@ public class MenuMapper {
     public static MenuCategoryResponseDto toResponseDto(MenuCategory category) {
         return new MenuCategoryResponseDto(category.getId(), category.getName(), category.getDescription());
     }
+
 }

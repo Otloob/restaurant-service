@@ -4,7 +4,10 @@ package com.outloob.restaurant.menu.controller;
 import com.outloob.restaurant.common.ApiResponse;
 import com.outloob.restaurant.menu.dto.MenuCategoryResponseDto;
 import com.outloob.restaurant.menu.dto.MenuCategoryRequestDto;
+import com.outloob.restaurant.menu.dto.MenuItemRequestDto;
+import com.outloob.restaurant.menu.dto.MenuItemResponseDto;
 import com.outloob.restaurant.menu.service.MenuCategoryService;
+import com.outloob.restaurant.menu.service.MenuItemService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +37,7 @@ Items
 public class MenuController {
 
     private final MenuCategoryService menuCategoryService;
+    private final MenuItemService menuItemService;
 
     @PostMapping(path = "/categories", version = "1.0")
     public ResponseEntity<ApiResponse<MenuCategoryResponseDto>> createMenuCategory(
@@ -70,6 +74,41 @@ public class MenuController {
     public ResponseEntity<Void> deleteMenuCategory(
             @PathVariable UUID id, @PathVariable UUID categoryId) {
         menuCategoryService.deleteCategory(id, categoryId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping(path = "/items", version = "1.0")
+    public ResponseEntity<ApiResponse<MenuItemResponseDto>> createMenuItem(
+            @PathVariable UUID id,
+            @RequestBody MenuItemRequestDto request) {
+        MenuItemResponseDto created = menuItemService.createItem(id, request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success(created, "The Menu Item is created successfully"));
+    }
+
+    @GetMapping(path = "/items", version = "1.0")
+    public ResponseEntity<ApiResponse<List<MenuItemResponseDto>>> getMenuItems(@PathVariable UUID id) {
+        return ResponseEntity.ok(ApiResponse.success(menuItemService.getItems(id)));
+    }
+
+    @GetMapping(path = "/items/{itemId}", version = "1.0")
+    public ResponseEntity<ApiResponse<MenuItemResponseDto>> getMenuItem(
+            @PathVariable UUID id, @PathVariable UUID itemId) {
+        return ResponseEntity.ok(ApiResponse.success(menuItemService.getItem(id, itemId)));
+    }
+
+    @PutMapping(path = "/items/{itemId}", version = "1.0")
+    public ResponseEntity<ApiResponse<MenuItemResponseDto>> updateMenuItem(
+            @PathVariable UUID id,
+            @PathVariable UUID itemId,
+            @RequestBody MenuItemRequestDto request) {
+        MenuItemResponseDto updated = menuItemService.updateItem(id, itemId, request);
+        return ResponseEntity.ok(ApiResponse.success(updated, "The Menu Item is updated successfully"));
+    }
+
+    @DeleteMapping(path = "/items/{itemId}", version = "1.0")
+    public ResponseEntity<Void> deleteMenuItem(@PathVariable UUID id, @PathVariable UUID itemId) {
+        menuItemService.deleteItem(id, itemId);
         return ResponseEntity.noContent().build();
     }
 

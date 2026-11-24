@@ -20,7 +20,7 @@ public class MenuItem {
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", nullable = false)
     private MenuCategory category;
 
     @Column(name = "name" , nullable = false)
