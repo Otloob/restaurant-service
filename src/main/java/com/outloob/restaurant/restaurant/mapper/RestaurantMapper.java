@@ -2,6 +2,8 @@ package com.outloob.restaurant.restaurant.mapper;
 
 
 import com.outloob.restaurant.restaurant.dto.OpeningHoursDto;
+import com.outloob.restaurant.restaurant.dto.RestaurantPublicDetailsDto;
+import com.outloob.restaurant.restaurant.dto.RestaurantPublicSummaryDto;
 import com.outloob.restaurant.restaurant.dto.RestaurantRequestDto;
 import com.outloob.restaurant.restaurant.dto.RestaurantResponseDetailsDto;
 import com.outloob.restaurant.restaurant.dto.UpdateRestaurantProfileRequest;
@@ -54,6 +56,44 @@ public class RestaurantMapper {
                 restaurant.getEmail(),
                 restaurant.getPhoneNumber(),
                 restaurant.getStatus(),
+                restaurant.getLatitude(),
+                restaurant.getLongitude(),
+                restaurant.getDeliveryRadiusM(),
+                restaurant.getRating(),
+                restaurant.getRatingCount(),
+                restaurant.getAddress(),
+                toOpeningHoursDtos(restaurant.getOpeningHours())
+        );
+    }
+
+    public static RestaurantPublicSummaryDto toPublicSummaryDto(Restaurant restaurant) {
+        if (restaurant == null) {
+            return null;
+        }
+
+        return new RestaurantPublicSummaryDto(
+                restaurant.getId(),
+                restaurant.getName(),
+                restaurant.getDescription(),
+                restaurant.getLatitude(),
+                restaurant.getLongitude(),
+                restaurant.getDeliveryRadiusM(),
+                restaurant.getRating(),
+                restaurant.getRatingCount(),
+                restaurant.getAddress()
+        );
+    }
+
+    public static RestaurantPublicDetailsDto toPublicDetailsDto(Restaurant restaurant) {
+        if (restaurant == null) {
+            return null;
+        }
+
+        return new RestaurantPublicDetailsDto(
+                restaurant.getId(),
+                restaurant.getName(),
+                restaurant.getDescription(),
+                restaurant.getPhoneNumber(),
                 restaurant.getLatitude(),
                 restaurant.getLongitude(),
                 restaurant.getDeliveryRadiusM(),
