@@ -38,6 +38,8 @@ public class MenuItemService {
     public ApiResponse.PagedData<MenuItemResponseDto> getItems(
             UUID restaurantId, UUID categoryId, int page, int limit) {
         ensureRestaurantExists(restaurantId);
+        page = page < 0 ? 0 : page;
+        limit = limit < 1 || limit > 100 ? 20 : limit;
         if (categoryId != null) {
             findCategory(restaurantId, categoryId);
         }

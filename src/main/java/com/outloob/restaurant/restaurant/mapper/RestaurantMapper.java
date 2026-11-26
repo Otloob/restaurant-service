@@ -3,6 +3,7 @@ package com.outloob.restaurant.restaurant.mapper;
 
 import com.outloob.restaurant.restaurant.dto.RestaurantRequestDto;
 import com.outloob.restaurant.restaurant.dto.RestaurantResponseDto;
+import com.outloob.restaurant.restaurant.dto.OpeningHoursResponseDto;
 import com.outloob.restaurant.restaurant.entity.Address;
 import com.outloob.restaurant.restaurant.entity.OpeningHours;
 import com.outloob.restaurant.restaurant.entity.Restaurant;
@@ -49,7 +50,13 @@ public class RestaurantMapper {
                 restaurant.getRating(),
                 restaurant.getRatingCount(),
                 restaurant.getAddress(),
-                restaurant.getOpeningHours()
+                restaurant.getOpeningHours().stream()
+                        .map(hours -> new OpeningHoursResponseDto(
+                                hours.getId(),
+                                hours.getDayOfWeek(),
+                                hours.getOpensAt(),
+                                hours.getClosesAt()))
+                        .toList()
         );
     }
 }

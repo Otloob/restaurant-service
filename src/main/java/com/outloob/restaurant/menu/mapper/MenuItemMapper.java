@@ -15,6 +15,7 @@ public class MenuItemMapper {
                 .price(request.price())
                 .imageUrl(request.imageUrl())
                 .available(request.available())
+                .tag(request.tag())
                 .build();
     }
 
@@ -25,10 +26,11 @@ public class MenuItemMapper {
         item.setPrice(request.price());
         item.setImageUrl(request.imageUrl());
         item.setAvailable(request.available());
+        item.setTag(request.tag());
     }
 
     public static MenuItemResponseDto toResponseDto(MenuItem item) {
         return new MenuItemResponseDto(item.getId(), item.getCategory().getId(), item.getName(),
-                item.getDescription(), item.getPrice(), item.getImageUrl(), item.getAvailable());
+                item.getDescription(), item.getPrice(), item.getImageUrl(), item.getAvailable(), item.getTag());
     }
 }

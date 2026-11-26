@@ -9,6 +9,7 @@ public record MenuItemResponseDto(
         String description,
         Double price,
         String imageUrl,
-        Boolean available
+        Boolean available,
+        String tag
 ) {
 }

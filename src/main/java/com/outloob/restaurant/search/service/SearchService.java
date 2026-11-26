@@ -7,9 +7,11 @@ import com.outloob.restaurant.restaurant.enums.RestaurantStatus;
 import com.outloob.restaurant.restaurant.mapper.RestaurantMapper;
 import com.outloob.restaurant.restaurant.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -25,15 +27,15 @@ public class SearchService {
     private final RestaurantRepository restaurantRepository;
 
     public ApiResponse.PagedData<RestaurantResponseDto> findNearbyRestaurants(
-            double latitude, double longitude, double radiusKm, int page, int limit) {
+            double latitude, double longitude, double radiusKm, String restaurantName,
+            String category, String dish, String tag, int page, int limit) {
         if (!isValidCoordinate(latitude, longitude) || !Double.isFinite(radiusKm)
-                || radiusKm <= 0 || page < 0 || limit < 1 || limit > 100) {
+                || radiusKm <= 0 || page < 1 || limit < 1 || limit > 100) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Coordinates must be valid, radiusKm must be positive, page must be nonnegative, and limit must be between 1 and 100");
+                    "Coordinates must be valid, radiusKm must be positive, page must be at least 1, and limit must be between 1 and 100");
         }
 
-        List<Restaurant> nearby = restaurantRepository.findAll().stream()
-                .filter(restaurant -> restaurant.getStatus() == RestaurantStatus.ACTIVE)
+        List<Restaurant> nearby = findMatches(restaurantName, category, dish, tag).stream()
                 .filter(restaurant -> distanceKm(latitude, longitude,
                         restaurant.getLatitude(), restaurant.getLongitude()) <= radiusKm)
                 .sorted(Comparator
@@ -42,13 +44,57 @@ public class SearchService {
                         .thenComparing(Restaurant::getId))
                 .toList();
 
-        int startIndex = (int) Math.min((long) page * limit, nearby.size());
+        int startIndex = (int) Math.min((long) (page - 1) * limit, nearby.size());
         int endIndex = Math.min(startIndex + limit, nearby.size());
         List<RestaurantResponseDto> content = nearby.subList(startIndex, endIndex).stream()
                 .map(RestaurantMapper::toRestaurantDetialsResponseDto)
                 .toList();
-        return ApiResponse.PagedData.from(
-                new PageImpl<>(content, PageRequest.of(page, limit), nearby.size()));
+        int totalPages = (int) Math.ceil((double) nearby.size() / limit);
+        return new ApiResponse.PagedData<>(
+                content,
+                new ApiResponse.PageMetadata(
+                        page, limit, nearby.size(), totalPages, page >= totalPages));
+    }
+
+    public ApiResponse.PagedData<RestaurantResponseDto> searchRestaurants(
+            String restaurantName, String category, String dish, String tag, int page, int limit) {
+        validatePagination(page, limit);
+        Page<Restaurant> results = restaurantRepository.searchRestaurants(
+                RestaurantStatus.ACTIVE,
+                normalizeFilter(restaurantName),
+                normalizeFilter(category),
+                normalizeFilter(dish),
+                normalizeFilter(tag),
+                PageRequest.of(page - 1, limit, Sort.by("id")));
+        List<RestaurantResponseDto> content = results.getContent().stream()
+                .map(RestaurantMapper::toRestaurantDetialsResponseDto)
+                .toList();
+        return new ApiResponse.PagedData<>(
+                content,
+                new ApiResponse.PageMetadata(
+                        page, limit, results.getTotalElements(), results.getTotalPages(), results.isLast()));
+    }
+
+    private List<Restaurant> findMatches(String restaurantName, String category,
+                                         String dish, String tag) {
+        return restaurantRepository.searchRestaurants(
+                RestaurantStatus.ACTIVE,
+                normalizeFilter(restaurantName),
+                normalizeFilter(category),
+                normalizeFilter(dish),
+                normalizeFilter(tag),
+                Pageable.unpaged()).getContent();
+    }
+
+    private String normalizeFilter(String value) {
+        return value == null || value.isBlank() ? null : value.trim();
+    }
+
+    private void validatePagination(int page, int limit) {
+        if (page < 1 || limit < 1 || limit > 100) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Page must be at least 1 and limit must be between 1 and 100");
+        }
     }
 
     private boolean isValidCoordinate(double latitude, double longitude) {

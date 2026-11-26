@@ -36,6 +36,8 @@ public class MenuCategoryService {
     public ApiResponse.PagedData<MenuCategoryResponseDto> getCategories(
             UUID restaurantId, int page, int limit) {
         ensureRestaurantExists(restaurantId);
+        page = page < 0 ? 0 : page;
+        limit = limit < 1 || limit > 100 ? 20 : limit;
         return ApiResponse.PagedData.from(menuCategoryRepository
                 .findAllByRestaurant_Id(restaurantId, PageRequest.of(page, limit, Sort.by("id")))
                 .map(MenuMapper::toResponseDto));

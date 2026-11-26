@@ -1,7 +1,6 @@
 package com.outloob.restaurant.restaurant.dto;
 
 import com.outloob.restaurant.restaurant.entity.Address;
-import com.outloob.restaurant.restaurant.entity.OpeningHours;
 import com.outloob.restaurant.restaurant.enums.RestaurantStatus;
 
 import java.util.List;
@@ -20,6 +19,6 @@ public record RestaurantResponseDto(
         double rating,
         int ratingCount,
         Address address,
-        List<OpeningHours> openingHours
+        List<OpeningHoursResponseDto> openingHours
 ) {
 }

@@ -19,7 +19,8 @@ public record MenuItemRequestDto(
         Double price,
 
         String imageUrl,
-        Boolean available
+        Boolean available,
+        String tag
 ) {
     public MenuItemRequestDto{
        if(available == null){

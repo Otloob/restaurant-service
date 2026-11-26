@@ -52,10 +52,9 @@ public class MenuController {
     @GetMapping(path = "/categories", version = "1.0")
     public ResponseEntity<ApiResponse<ApiResponse.PagedData<MenuCategoryResponseDto>>> getMenuCategories(
             @PathVariable UUID id,
-            @RequestParam(defaultValue = "0") String page,
-            @RequestParam(defaultValue = "20") String limit) {
-        return ResponseEntity.ok(ApiResponse.success(menuCategoryService.getCategories(
-                id, parsePage(page), parseLimit(limit))));
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int limit) {
+        return ResponseEntity.ok(ApiResponse.success(menuCategoryService.getCategories(id, page, limit)));
     }
 
     @GetMapping(path = "/categories/{categoryId}", version = "1.0")
@@ -82,8 +81,8 @@ public class MenuController {
 
     @PostMapping(path = "/items", version = "1.0")
     public ResponseEntity<ApiResponse<MenuItemResponseDto>> createMenuItem(
-            @PathVariable UUID id,
-            @RequestBody MenuItemRequestDto request) {
+            @RequestBody MenuItemRequestDto request,
+            @PathVariable UUID id) {
         MenuItemResponseDto created = menuItemService.createItem(id, request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success(created, "The Menu Item is created successfully"));
@@ -93,10 +92,9 @@ public class MenuController {
     public ResponseEntity<ApiResponse<ApiResponse.PagedData<MenuItemResponseDto>>> getMenuItems(
             @PathVariable UUID id,
             @RequestParam(required = false) UUID categoryId,
-            @RequestParam(defaultValue = "0") String page,
-            @RequestParam(defaultValue = "20") String limit) {
-        return ResponseEntity.ok(ApiResponse.success(menuItemService.getItems(
-                id, categoryId, parsePage(page), parseLimit(limit))));
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int limit) {
+        return ResponseEntity.ok(ApiResponse.success(menuItemService.getItems(id, categoryId, page, limit)));
     }
 
     @GetMapping(path = "/items/{itemId}", version = "1.0")
@@ -118,24 +116,6 @@ public class MenuController {
     public ResponseEntity<Void> deleteMenuItem(@PathVariable UUID id, @PathVariable UUID itemId) {
         menuItemService.deleteItem(id, itemId);
         return ResponseEntity.noContent().build();
-    }
-
-    private int parsePage(String value) {
-        try {
-            int page = Integer.parseInt(value);
-            return page >= 0 ? page : 0;
-        } catch (NumberFormatException exception) {
-            return 0;
-        }
-    }
-
-    private int parseLimit(String value) {
-        try {
-            int limit = Integer.parseInt(value);
-            return limit >= 1 && limit <= 100 ? limit : 20;
-        } catch (NumberFormatException exception) {
-            return 20;
-        }
     }
 
 }

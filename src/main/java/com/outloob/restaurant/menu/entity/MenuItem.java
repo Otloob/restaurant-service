@@ -38,4 +38,7 @@ public class MenuItem {
     @Column(name="available")
     private Boolean available;
 
+    @Column(name="tag")
+    private String tag;
+
 }
