@@ -18,6 +18,15 @@ public class MenuItemMapper {
                 .build();
     }
 
+    public static void updateEntity(MenuItem item, MenuItemRequestDto request, MenuCategory category) {
+        item.setCategory(category);
+        item.setName(request.name());
+        item.setDescription(request.description());
+        item.setPrice(request.price());
+        item.setImageUrl(request.imageUrl());
+        item.setAvailable(request.available());
+    }
+
     public static MenuItemResponseDto toResponseDto(MenuItem item) {
         return new MenuItemResponseDto(item.getId(), item.getCategory().getId(), item.getName(),
                 item.getDescription(), item.getPrice(), item.getImageUrl(), item.getAvailable());

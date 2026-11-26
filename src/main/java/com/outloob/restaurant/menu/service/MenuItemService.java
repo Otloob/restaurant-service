@@ -1,5 +1,6 @@
 package com.outloob.restaurant.menu.service;
 
+import com.outloob.restaurant.common.ApiResponse;
 import com.outloob.restaurant.menu.dto.MenuItemRequestDto;
 import com.outloob.restaurant.menu.dto.MenuItemResponseDto;
 import com.outloob.restaurant.menu.entity.MenuCategory;
@@ -14,8 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 @Service
 @AllArgsConstructor
@@ -33,11 +35,18 @@ public class MenuItemService {
     }
 
     @Transactional(readOnly = true)
-    public List<MenuItemResponseDto> getItems(UUID restaurantId) {
+    public ApiResponse.PagedData<MenuItemResponseDto> getItems(
+            UUID restaurantId, UUID categoryId, int page, int limit) {
         ensureRestaurantExists(restaurantId);
-        return menuItemRepository.findAllByCategory_Restaurant_Id(restaurantId).stream()
-                .map(MenuItemMapper::toResponseDto)
-                .toList();
+        if (categoryId != null) {
+            findCategory(restaurantId, categoryId);
+        }
+        var pageable = PageRequest.of(page, limit, Sort.by("id"));
+        var items = categoryId == null
+                ? menuItemRepository.findAllByCategory_Restaurant_Id(restaurantId, pageable)
+                : menuItemRepository.findAllByCategory_IdAndCategory_Restaurant_Id(
+                        categoryId, restaurantId, pageable);
+        return ApiResponse.PagedData.from(items.map(MenuItemMapper::toResponseDto));
     }
 
     @Transactional(readOnly = true)
@@ -49,12 +58,7 @@ public class MenuItemService {
     public MenuItemResponseDto updateItem(UUID restaurantId, UUID itemId, MenuItemRequestDto request) {
         MenuItem item = findItem(restaurantId, itemId);
         MenuCategory category = findCategory(restaurantId, request.categoryId());
-        item.setCategory(category);
-        item.setName(request.name());
-        item.setDescription(request.description());
-        item.setPrice(request.price());
-        item.setImageUrl(request.imageUrl());
-        item.setAvailable(request.available());
+        MenuItemMapper.updateEntity(item, request, category);
         return MenuItemMapper.toResponseDto(menuItemRepository.save(item));
     }
 
@@ -84,4 +88,5 @@ public class MenuItemService {
                     "Restaurant not found: " + restaurantId);
         }
     }
+
 }

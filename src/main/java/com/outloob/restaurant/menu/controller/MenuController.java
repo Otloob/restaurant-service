@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
-import java.util.List;
 
 /*
 CRUD
@@ -50,9 +50,12 @@ public class MenuController {
     }
 
     @GetMapping(path = "/categories", version = "1.0")
-    public ResponseEntity<ApiResponse<List<MenuCategoryResponseDto>>> getMenuCategories(
-            @PathVariable UUID id) {
-        return ResponseEntity.ok(ApiResponse.success(menuCategoryService.getCategories(id)));
+    public ResponseEntity<ApiResponse<ApiResponse.PagedData<MenuCategoryResponseDto>>> getMenuCategories(
+            @PathVariable UUID id,
+            @RequestParam(defaultValue = "0") String page,
+            @RequestParam(defaultValue = "20") String limit) {
+        return ResponseEntity.ok(ApiResponse.success(menuCategoryService.getCategories(
+                id, parsePage(page), parseLimit(limit))));
     }
 
     @GetMapping(path = "/categories/{categoryId}", version = "1.0")
@@ -87,8 +90,13 @@ public class MenuController {
     }
 
     @GetMapping(path = "/items", version = "1.0")
-    public ResponseEntity<ApiResponse<List<MenuItemResponseDto>>> getMenuItems(@PathVariable UUID id) {
-        return ResponseEntity.ok(ApiResponse.success(menuItemService.getItems(id)));
+    public ResponseEntity<ApiResponse<ApiResponse.PagedData<MenuItemResponseDto>>> getMenuItems(
+            @PathVariable UUID id,
+            @RequestParam(required = false) UUID categoryId,
+            @RequestParam(defaultValue = "0") String page,
+            @RequestParam(defaultValue = "20") String limit) {
+        return ResponseEntity.ok(ApiResponse.success(menuItemService.getItems(
+                id, categoryId, parsePage(page), parseLimit(limit))));
     }
 
     @GetMapping(path = "/items/{itemId}", version = "1.0")
@@ -110,6 +118,24 @@ public class MenuController {
     public ResponseEntity<Void> deleteMenuItem(@PathVariable UUID id, @PathVariable UUID itemId) {
         menuItemService.deleteItem(id, itemId);
         return ResponseEntity.noContent().build();
+    }
+
+    private int parsePage(String value) {
+        try {
+            int page = Integer.parseInt(value);
+            return page >= 0 ? page : 0;
+        } catch (NumberFormatException exception) {
+            return 0;
+        }
+    }
+
+    private int parseLimit(String value) {
+        try {
+            int limit = Integer.parseInt(value);
+            return limit >= 1 && limit <= 100 ? limit : 20;
+        } catch (NumberFormatException exception) {
+            return 20;
+        }
     }
 
 }

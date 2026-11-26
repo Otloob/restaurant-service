@@ -1,5 +1,6 @@
 package com.outloob.restaurant.menu.service;
 
+import com.outloob.restaurant.common.ApiResponse;
 import com.outloob.restaurant.menu.dto.MenuCategoryRequestDto;
 import com.outloob.restaurant.menu.dto.MenuCategoryResponseDto;
 import com.outloob.restaurant.menu.entity.MenuCategory;
@@ -13,8 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
-import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 @Service
 @AllArgsConstructor
@@ -31,11 +33,12 @@ public class MenuCategoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<MenuCategoryResponseDto> getCategories(UUID restaurantId) {
+    public ApiResponse.PagedData<MenuCategoryResponseDto> getCategories(
+            UUID restaurantId, int page, int limit) {
         ensureRestaurantExists(restaurantId);
-        return menuCategoryRepository.findAllByRestaurant_Id(restaurantId).stream()
-                .map(MenuMapper::toResponseDto)
-                .toList();
+        return ApiResponse.PagedData.from(menuCategoryRepository
+                .findAllByRestaurant_Id(restaurantId, PageRequest.of(page, limit, Sort.by("id")))
+                .map(MenuMapper::toResponseDto));
     }
 
     @Transactional(readOnly = true)

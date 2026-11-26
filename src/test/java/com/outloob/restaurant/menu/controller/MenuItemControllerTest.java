@@ -1,6 +1,7 @@
 package com.outloob.restaurant.menu.controller;
 
 import com.outloob.restaurant.config.WebConfig;
+import com.outloob.restaurant.common.ApiResponse;
 import com.outloob.restaurant.menu.dto.MenuItemRequestDto;
 import com.outloob.restaurant.menu.dto.MenuItemResponseDto;
 import com.outloob.restaurant.menu.service.MenuCategoryService;
@@ -75,14 +76,16 @@ class MenuItemControllerTest {
     void listsItemsForRestaurant() throws Exception {
         UUID restaurantId = UUID.randomUUID();
         UUID categoryId = UUID.randomUUID();
-        when(menuItemService.getItems(restaurantId)).thenReturn(List.of(
-                new MenuItemResponseDto(UUID.randomUUID(), categoryId, "Latte", "Milk coffee", 4.5,
-                        null, true)));
+        when(menuItemService.getItems(restaurantId, null, 0, 20)).thenReturn(
+                new ApiResponse.PagedData<>(List.of(
+                        new MenuItemResponseDto(UUID.randomUUID(), categoryId, "Latte", "Milk coffee", 4.5,
+                                null, true)),
+                        new ApiResponse.PageMetadata(0, 20, 1, 1, true)));
 
         mockMvc.perform(get("/api/merchant/restaurants/{id}/items", restaurantId)
                         .accept(API_VERSION))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data[0].name").value("Latte"));
+                .andExpect(jsonPath("$.data.content[0].name").value("Latte"));
     }
 
     @Test
