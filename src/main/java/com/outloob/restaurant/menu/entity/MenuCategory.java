@@ -1,4 +1,5 @@
 package com.outloob.restaurant.menu.entity;
+import com.outloob.restaurant.common.BaseEntity;
 import com.outloob.restaurant.restaurant.entity.Restaurant;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,7 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MenuCategory {
+public class MenuCategory extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
