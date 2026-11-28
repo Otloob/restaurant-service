@@ -10,6 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
+import static com.outloob.restaurant.common.util.RequestValueUtils.optionalParam;
+import static com.outloob.restaurant.common.util.RequestValueUtils.requestDouble;
+import static com.outloob.restaurant.common.util.RequestValueUtils.requestInt;
+
 @RestController
 @RequestMapping("/v1/restaurants")
 @RequiredArgsConstructor
@@ -19,31 +25,25 @@ public class SearchController {
 
     @GetMapping("/nearby")
     public ResponseEntity<ApiResponse<ApiResponse.PagedData<RestaurantResponseDto>>> findNearbyRestaurants(
-            @RequestParam double latitude,
-            @RequestParam double longitude,
-            @RequestParam(defaultValue = "5") double radiusKm,
-            @RequestParam(required = false) String restaurantName,
-            @RequestParam(required = false) String category,
-            @RequestParam(required = false) String dish,
-            @RequestParam(required = false) String tag,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "20") int limit) {
+            @RequestParam Map<String, String> requestParams) {
         ApiResponse.PagedData<RestaurantResponseDto> results =
                 searchService.findNearbyRestaurants(
-                        latitude, longitude, radiusKm, restaurantName, category, dish, tag, page, limit);
+                        requestDouble(requestParams, "latitude"), requestDouble(requestParams, "longitude"),
+                        requestDouble(requestParams, "radiusKm", 5), optionalParam(requestParams, "restaurantName"),
+                        optionalParam(requestParams, "category"), optionalParam(requestParams, "dish"),
+                        optionalParam(requestParams, "tag"), requestInt(requestParams, "page", 1),
+                        requestInt(requestParams, "limit", 20));
         return ResponseEntity.ok(ApiResponse.success(results, "Nearby restaurants found"));
     }
 
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<ApiResponse.PagedData<RestaurantResponseDto>>> searchRestaurants(
-            @RequestParam(required = false) String restaurantName,
-            @RequestParam(required = false) String category,
-            @RequestParam(required = false) String dish,
-            @RequestParam(required = false) String tag,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "20") int limit) {
+            @RequestParam Map<String, String> requestParams) {
         ApiResponse.PagedData<RestaurantResponseDto> results =
-                searchService.searchRestaurants(restaurantName, category, dish, tag, page, limit);
+                searchService.searchRestaurants(optionalParam(requestParams, "restaurantName"),
+                        optionalParam(requestParams, "category"), optionalParam(requestParams, "dish"),
+                        optionalParam(requestParams, "tag"), requestInt(requestParams, "page", 1),
+                        requestInt(requestParams, "limit", 20));
         return ResponseEntity.ok(ApiResponse.success(results, "Restaurants found"));
     }
 }
